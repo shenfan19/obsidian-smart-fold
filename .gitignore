@@ -1,6 +1,6 @@
 # Build artifacts
-obsidian-smart-fold/
-obsidian-smart-fold*
+smart-fold/
+smart-fold*
 
 # System files
 node_modules
