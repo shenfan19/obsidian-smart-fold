@@ -1,1 +1,0 @@
-# obsidian-smart-fold
