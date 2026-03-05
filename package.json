@@ -6,30 +6,27 @@
   "main": "main.js",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint . --ext .ts",
-    "dev": "node --experimental-json-modules esbuild.config.mjs",
-    "build": "yarn run lint && node --experimental-json-modules esbuild.config.mjs production"
-  },
-  "peerDependencies": {
-    "@codemirror/language": "0.19.x",
-    "@codemirror/rangeset": "0.19.x",
-    "@codemirror/view": "0.19.x"
+    "dev": "node esbuild.config.mjs",
+    "build": "node esbuild.config.mjs production",
+    "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
-    "@codemirror/basic-setup": "^0.20.0",
-    "@codemirror/lang-css": "^6.2.0",
-    "@codemirror/language": "^6.8.0",
-    "@codemirror/rangeset": "^0.19.9",
-    "@codemirror/view": "^6.15.0",
-    "@types/node": "^20.0.0",
+    "@codemirror/autocomplete": "^6.0.0",
+    "@codemirror/commands": "^6.0.0",
+    "@codemirror/language": "^6.0.0",
+    "@codemirror/lint": "^6.0.0",
+    "@codemirror/search": "^6.0.0",
+    "@codemirror/state": "^6.0.0",
+    "@codemirror/view": "^6.0.0",
+    "@types/node": "^16.11.6",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.13.0",
     "builtin-modules": "^3.2.0",
-    "dotenv": "16.0.0",
-    "esbuild": "^0.23.0",
+    "dotenv": "^16.0.0",
+    "esbuild": "0.25.5",
     "eslint": "^8.3.0",
     "obsidian": "latest",
-    "tslib": "2.3.1",
-    "typescript": "^5.0.0"
+    "tslib": "2.4.0",
+    "typescript": "^5.8.3"
   }
 }

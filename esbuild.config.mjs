@@ -1,9 +1,11 @@
-import { config } from "dotenv";
 import esbuild from "esbuild";
 import process from "process";
 import builtins from "builtin-modules";
+import { config } from "dotenv";
+import fs from "node:fs";
+import path from "node:path";
 
-import manifest from "./manifest.json" with { type: "json" };
+const manifest = JSON.parse(fs.readFileSync("manifest.json", "utf8"));
 
 config();
 
@@ -19,7 +21,7 @@ if (!prod) {
   const vaultDir =
     process.env.REAL === "1" ? process.env.REAL_VAULT : process.env.TEST_VAULT;
   if (vaultDir) {
-    outdir = `${vaultDir}.obsidian/plugins/${manifest.id}`;
+    outdir = path.join(vaultDir, ".obsidian", "plugins", manifest.id);
   }
 }
 
@@ -36,12 +38,14 @@ const context = await esbuild.context({
     "obsidian",
     "electron",
     "codemirror",
+    "@codemirror/autocomplete",
     "@codemirror/closebrackets",
     "@codemirror/commands",
     "@codemirror/fold",
     "@codemirror/gutter",
     "@codemirror/history",
     "@codemirror/language",
+    "@codemirror/lint",
     "@codemirror/rangeset",
     "@codemirror/rectangular-selection",
     "@codemirror/search",
@@ -49,10 +53,13 @@ const context = await esbuild.context({
     "@codemirror/stream-parser",
     "@codemirror/text",
     "@codemirror/view",
+    "@lezer/common",
+    "@lezer/highlight",
+    "@lezer/lr",
     ...builtins,
   ],
   format: "cjs",
-  target: "es2016",
+  target: "es2018",
   logLevel: "info",
   sourcemap: prod ? false : "inline",
   treeShaking: true,
