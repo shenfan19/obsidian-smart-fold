@@ -25,39 +25,43 @@ if (!prod) {
 
 console.info(`\nSaving plugin to ${outdir}\n`);
 
-esbuild
-  .build({
-    banner: {
-      js: banner,
-    },
-    minify: prod ? true : false,
-    entryPoints: ["src/main.ts"],
-    bundle: true,
-    external: [
-      "obsidian",
-      "electron",
-      "codemirror",
-      "@codemirror/closebrackets",
-      "@codemirror/commands",
-      "@codemirror/fold",
-      "@codemirror/gutter",
-      "@codemirror/history",
-      "@codemirror/language",
-      "@codemirror/rangeset",
-      "@codemirror/rectangular-selection",
-      "@codemirror/search",
-      "@codemirror/state",
-      "@codemirror/stream-parser",
-      "@codemirror/text",
-      "@codemirror/view",
-      ...builtins,
-    ],
-    format: "cjs",
-    watch: !prod,
-    target: "es2016",
-    logLevel: "info",
-    sourcemap: prod ? false : "inline",
-    treeShaking: true,
-    outdir: outdir,
-  })
-  .catch(() => process.exit(1));
+const context = await esbuild.context({
+  banner: {
+    js: banner,
+  },
+  minify: prod ? true : false,
+  entryPoints: ["src/main.ts"],
+  bundle: true,
+  external: [
+    "obsidian",
+    "electron",
+    "codemirror",
+    "@codemirror/closebrackets",
+    "@codemirror/commands",
+    "@codemirror/fold",
+    "@codemirror/gutter",
+    "@codemirror/history",
+    "@codemirror/language",
+    "@codemirror/rangeset",
+    "@codemirror/rectangular-selection",
+    "@codemirror/search",
+    "@codemirror/state",
+    "@codemirror/stream-parser",
+    "@codemirror/text",
+    "@codemirror/view",
+    ...builtins,
+  ],
+  format: "cjs",
+  target: "es2016",
+  logLevel: "info",
+  sourcemap: prod ? false : "inline",
+  treeShaking: true,
+  outdir: outdir,
+});
+
+if (prod) {
+  await context.rebuild();
+  process.exit(0);
+} else {
+  await context.watch();
+}
