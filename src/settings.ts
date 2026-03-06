@@ -35,7 +35,10 @@ export class SmartFoldSettingTab extends PluginSettingTab {
         const { containerEl } = this;
         containerEl.empty();
 
-        containerEl.createEl("h2", { text: "Smart Fold Ribbon Icons" });
+        new Setting(containerEl)
+            .setName("Smart fold ribbon icons")
+            .setHeading();
+            
         containerEl.createEl("p", {
             text: "Toggle which ribbon icons (left toolbar) you want to see for quick access.",
             cls: "setting-item-description"
@@ -48,34 +51,37 @@ export class SmartFoldSettingTab extends PluginSettingTab {
                 .addToggle((toggle) => {
                     toggle.setValue(this.plugin.settings[key] as boolean);
                     toggle.onChange(async (value) => {
-                        (this.plugin.settings as any)[key] = value;
+                        const settings = this.plugin.settings;
+                        if (key in settings) {
+                            (settings as any)[key] = value;
+                        }
                         await this.plugin.saveSettings();
                         this.plugin.refreshRibbons();
                     });
                 });
         };
 
-        createToggle("Show H1 Ribbon Icon", "Toggle fold for H1", "showRibbonH1");
-        createToggle("Show H2 Ribbon Icon", "Toggle fold for H2", "showRibbonH2");
-        createToggle("Show H3 Ribbon Icon", "Toggle fold for H3", "showRibbonH3");
-        createToggle("Show H4 Ribbon Icon", "Toggle fold for H4", "showRibbonH4");
-        createToggle("Show H5 Ribbon Icon", "Toggle fold for H5", "showRibbonH5");
-        createToggle("Show H6 Ribbon Icon", "Toggle fold for H6", "showRibbonH6");
-        createToggle("Show Smart Fold Ribbon Icon", "Fold headings without children", "showRibbonSmart");
+        createToggle("Show H1 ribbon icon", "Toggle fold for H1", "showRibbonH1");
+        createToggle("Show H2 ribbon icon", "Toggle fold for H2", "showRibbonH2");
+        createToggle("Show H3 ribbon icon", "Toggle fold for H3", "showRibbonH3");
+        createToggle("Show H4 ribbon icon", "Toggle fold for H4", "showRibbonH4");
+        createToggle("Show H5 ribbon icon", "Toggle fold for H5", "showRibbonH5");
+        createToggle("Show H6 ribbon icon", "Toggle fold for H6", "showRibbonH6");
+        createToggle("Show smart fold ribbon icon", "Fold headings without children", "showRibbonSmart");
 
         new Setting(containerEl)
-            .setName("Default Fold State on Open")
+            .setName("Default fold state on open")
             .setDesc("Automatically fold headings when opening a new page.")
             .addDropdown(cb => {
                 cb.addOptions({
-                    "none": "None (Do nothing)",
+                    "none": "None (do nothing)",
                     "h1": "Fold H1",
                     "h2": "Fold H2",
                     "h3": "Fold H3",
                     "h4": "Fold H4",
                     "h5": "Fold H5",
                     "h6": "Fold H6",
-                    "smart": "Smart Fold (No children)",
+                    "smart": "Smart fold (no children)",
                 });
                 cb.setValue(this.plugin.settings.defaultFoldStateOnOpen);
                 cb.onChange(async (value) => {

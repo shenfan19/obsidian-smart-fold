@@ -38,7 +38,7 @@ export default class SmartFoldPlugin extends Plugin {
       });
     });
 
-    this.ribbonElements['Smart'] = this.addRibbonIcon('smartfold-hs', 'Smart Fold (headings without children)', () => {
+    this.ribbonElements['Smart'] = this.addRibbonIcon('smartfold-hs', 'Smart fold (headings without children)', () => {
       const view = this.app.workspace.getActiveViewOfType(MarkdownView);
       if (view) this.foldHeadingsWithoutChildren(view);
     });
@@ -97,7 +97,7 @@ export default class SmartFoldPlugin extends Plugin {
       this.addCommand({
         id: `toggle-fold-heading-level-${level}`,
         name: `Toggle fold for H${level}`,
-        checkCallback: (checking) => {
+        checkCallback: (checking: boolean) => {
           const view = this.app.workspace.getActiveViewOfType(MarkdownView);
           if (!view) return false;
           if (checking) return true;
@@ -108,7 +108,7 @@ export default class SmartFoldPlugin extends Plugin {
       this.addCommand({
         id: `fold-heading-level-${level}`,
         name: `Fold H${level}`,
-        checkCallback: (checking) => {
+        checkCallback: (checking: boolean) => {
           const view = this.app.workspace.getActiveViewOfType(MarkdownView);
           if (!view) return false;
           if (checking) return true;
@@ -119,7 +119,7 @@ export default class SmartFoldPlugin extends Plugin {
       this.addCommand({
         id: `unfold-heading-level-${level}`,
         name: `Unfold H${level}`,
-        checkCallback: (checking) => {
+        checkCallback: (checking: boolean) => {
           const view = this.app.workspace.getActiveViewOfType(MarkdownView);
           if (!view) return false;
           if (checking) return true;
@@ -139,15 +139,16 @@ export default class SmartFoldPlugin extends Plugin {
     this.ribbonElements['Smart'].style.display = this.settings.showRibbonSmart ? "" : "none";
   }
 
-  async loadSettings() {
+  async loadSettings(): Promise<void> {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
   }
 
-  async saveSettings() {
+  async saveSettings(): Promise<void> {
     await this.saveData(this.settings);
   }
 
   public foldHeadingsWithoutChildren(view: MarkdownView, forceFold = false): void {
+    if (!view.file) return;
     const headings = this.app.metadataCache.getFileCache(view.file)?.headings ?? [];
     const existingFolds = view.currentMode.getFoldInfo()?.folds ?? [];
 
@@ -179,21 +180,21 @@ export default class SmartFoldPlugin extends Plugin {
 
     if (!forceFold) {
       const firstTargetLine = Array.from(targetHeadingLines)[0];
-      if (existingFolds.find(f => f.from === firstTargetLine)) {
+      if (existingFolds.find((f: { from: number }) => f.from === firstTargetLine)) {
         shouldUnfold = true;
       }
     }
 
     if (shouldUnfold) {
       view.currentMode.applyFoldInfo({
-        folds: existingFolds.filter(f => !targetHeadingLines.has(f.from)),
+        folds: existingFolds.filter((f: { from: number }) => !targetHeadingLines.has(f.from)),
         lines: view.editor.lineCount()
       });
       view.onMarkdownFold();
     } else {
       const newFolds = [...existingFolds];
       targetHeadingLines.forEach(line => {
-        if (!newFolds.find(f => f.from === line)) {
+        if (!newFolds.find((f: { from: number }) => f.from === line)) {
           newFolds.push({ from: line, to: line + 1 });
         }
       });
@@ -205,14 +206,15 @@ export default class SmartFoldPlugin extends Plugin {
     }
   }
 
-  async decreaseHeadingFoldLevel(_editor: Editor, view: MarkdownView) {
+  decreaseHeadingFoldLevel(_editor: Editor, view: MarkdownView) {
+    if (!view.file) return;
     const foldInfo = view.currentMode.getFoldInfo();
     const existingFolds = foldInfo?.folds ?? [];
     const headings = this.app.metadataCache.getFileCache(view.file)?.headings ?? [];
 
     let maxUnfoldedLevel = 1;
     for (const heading of headings) {
-      if (!existingFolds.find((f) => f.from === heading.position.start.line)) {
+      if (!existingFolds.find((f: { from: number }) => f.from === heading.position.start.line)) {
         maxUnfoldedLevel = Math.max(maxUnfoldedLevel, heading.level);
       }
     }
@@ -233,7 +235,8 @@ export default class SmartFoldPlugin extends Plugin {
     view.onMarkdownFold();
   }
 
-  async increaseHeadingFoldLevel(_editor: Editor, view: MarkdownView) {
+  increaseHeadingFoldLevel(_editor: Editor, view: MarkdownView) {
+    if (!view.file) return;
     const foldInfo = view.currentMode.getFoldInfo();
     const existingFolds = foldInfo?.folds ?? [];
     const headings = this.app.metadataCache.getFileCache(view.file)?.headings ?? [];
@@ -241,7 +244,7 @@ export default class SmartFoldPlugin extends Plugin {
     let maxFoldLevel = Math.max(...headings.map((h) => h.level));
     if (!Number.isFinite(maxFoldLevel)) return;
     for (const heading of headings) {
-      if (existingFolds.find((f) => f.from === heading.position.start.line)) {
+      if (existingFolds.find((f: { from: number }) => f.from === heading.position.start.line)) {
         maxFoldLevel = Math.min(maxFoldLevel, heading.level);
       }
     }
@@ -250,7 +253,7 @@ export default class SmartFoldPlugin extends Plugin {
       headings.filter((h) => h.level <= maxFoldLevel).map((h) => h.position.start.line)
     );
     const folds = existingFolds.filter(
-      (fold) => !excludedHeadingPositions.has(fold.from)
+      (fold: { from: number }) => !excludedHeadingPositions.has(fold.from)
     );
 
     view.currentMode.applyFoldInfo({
@@ -261,6 +264,7 @@ export default class SmartFoldPlugin extends Plugin {
   }
 
   foldLevel(view: MarkdownView, level: number): void {
+    if (!view.file) return;
     const existingFolds = view.currentMode.getFoldInfo()?.folds ?? [];
     const headings = this.app.metadataCache.getFileCache(view.file)?.headings ?? [];
 
@@ -281,6 +285,7 @@ export default class SmartFoldPlugin extends Plugin {
   }
 
   unfoldLevel(view: MarkdownView, level: number): void {
+    if (!view.file) return;
     const existingFolds = view.currentMode.getFoldInfo()?.folds ?? [];
     const headings = this.app.metadataCache.getFileCache(view.file)?.headings ?? [];
 
@@ -296,6 +301,7 @@ export default class SmartFoldPlugin extends Plugin {
   }
 
   toggleFoldForHeadingLevel(view: MarkdownView, level: number): void {
+    if (!view.file) return;
     const existingFolds = view.currentMode.getFoldInfo()?.folds ?? [];
     const headings = this.app.metadataCache.getFileCache(view.file)?.headings ?? [];
     const targetHeadings = level === 0 ? headings : headings.filter(h => h.level === level);
