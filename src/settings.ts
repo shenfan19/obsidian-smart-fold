@@ -71,9 +71,9 @@ export class SmartFoldSettingTab extends PluginSettingTab {
         createToggle("Show H4 ribbon icon", "Toggle fold for H4", "showRibbonH4");
         createToggle("Show H5 ribbon icon", "Toggle fold for H5", "showRibbonH5");
         createToggle("Show H6 ribbon icon", "Toggle fold for H6", "showRibbonH6");
-        createToggle("Show smart fold ribbon icon", "Fold headings without children (HS)", "showRibbonSmart");
-        createToggle("Show increase fold level icon", "Increase heading fold level (H+)", "showRibbonInc");
-        createToggle("Show decrease fold level icon", "Decrease heading fold level (H-)", "showRibbonDec");
+        createToggle("Show smart fold ribbon icon", "Fold headings without children", "showRibbonSmart");
+        createToggle("Show increase fold level icon", "Increase heading fold level", "showRibbonInc");
+        createToggle("Show decrease fold level icon", "Decrease heading fold level", "showRibbonDec");
 
         new Setting(containerEl)
             .setName("Default fold state on open")

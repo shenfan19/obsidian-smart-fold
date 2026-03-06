@@ -95,7 +95,7 @@ export default class SmartFoldPlugin extends Plugin {
 
     this.addCommand({
       id: "increase-fold-level",
-      name: "Increase heading fold level (H+)",
+      name: "Increase heading fold level",
       checkCallback: (checking: boolean) => {
         if (!this.settings.showRibbonInc) return false;
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -106,7 +106,7 @@ export default class SmartFoldPlugin extends Plugin {
 
     this.addCommand({
       id: "decrease-fold-level",
-      name: "Decrease heading fold level (H-)",
+      name: "Decrease heading fold level",
       checkCallback: (checking: boolean) => {
         if (!this.settings.showRibbonDec) return false;
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
