@@ -23,11 +23,11 @@ Smart Fold is a highly optimized and lightweight Obsidian plugin that provides a
 
 ## Development
 
-You can install dependencies and build it using:
+The project requires **Node.js >= 24.11.1**. You can install dependencies and build it using:
 
 ```bash
-yarn install
-yarn build
+npm install
+npm run build
 ```
 
 ## Credits

@@ -5,6 +5,9 @@
   "author": "Fan Shen",
   "main": "main.js",
   "license": "MIT",
+  "engines": {
+    "node": ">=24.11.1"
+  },
   "scripts": {
     "dev": "node esbuild.config.mjs",
     "build": "node esbuild.config.mjs production",
